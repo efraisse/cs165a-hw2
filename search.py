@@ -137,6 +137,10 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
+def depthFirstSearch(problem):
+
+    util.raiseNotDefined()
+
 
 def iterativeDeepeningSearch(problem: SearchProblem):
     """
