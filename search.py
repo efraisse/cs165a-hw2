@@ -138,18 +138,21 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
-def depthFirstSearch(problem):
+def depthFirstSearch(problem, max_depth): #switch it around, have depthfirstsearch have max_depth
     s = problem.getStartState()
     path = list()
-    nodes = list()
+    global nodeHeights
     global nodes
-    lastAction = depthFirstSearchHelper(problem)
+    nodes = list()
+    maxDepth = max_depth
+    nodeHeights = list();
+    lastAction = depthFirstSearchHelper(problem, 0, max_depth)
 
     goal = Node(None, None, None, 1)
     start = Node(s, None, None, 1)
 
     for n in nodes:
-        if n.getAction() = a
+        if n.getAction() == lastAction:
            goal = n
 
     path.append(goal)
@@ -158,12 +161,13 @@ def depthFirstSearch(problem):
         goal = goal.getParent()
         path.append(goal.getAction())
     
-    #reverse the array here to get a clear path of the dfs, perhaps use sorted again
+    path.reverse()
     return path
 
-def depthFirstSearchHelper(problem):
-    if problem.getState() != problem.getStartState():
-        parent = problem.getParent()
+def depthFirstSearchHelper(problem, current_depth, max_depth):
+
+    if current_depth >= max_depth:
+        return None
 
     if problem.getState() == None:
         return None
@@ -174,6 +178,7 @@ def depthFirstSearchHelper(problem):
 
     i = 0
     for a in actions:
+
         r[i] = getResults(problem.getState(), a)
 
         n = Node(problem.getState(), r[i], a, 1)
@@ -187,15 +192,17 @@ def depthFirstSearchHelper(problem):
 
         actions.push(r[i])
         i += 1
-        depthFirstSearch(r[i])
+        depthFirstSearch(r[i], current_depth + 1, max_depth)
         actions.pop()
 
     actions.pop()
 
-
 def iterativeDeepeningSearch(problem: SearchProblem):
     
-    return depthFirstSearch(problem)
+    k = 10 #max depth for depth first search, making it some arbitrary value for now
+    depth = 1
+    while depth < k:
+        return depthFirstSearch(problem, 0, depth)
 
     """
     Perform DFS with increasingly larger depth. Begin with a depth of 1 and increment depth by 1 at every step.
@@ -216,11 +223,6 @@ def iterativeDeepeningSearch(problem: SearchProblem):
     by calling problem.getCost(problem.getStartState(), one_of_the_actions)
 
     """
-    print("Start:", problem.getStartState())
-    print("Is the start a goal?", problem.goalTest(problem.getStartState()))
-
-    util.raiseNotDefined()
-    
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
