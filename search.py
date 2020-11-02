@@ -133,16 +133,70 @@ def breadthFirstSearch(problem):
 def nullHeuristic(state, problem=None):
     """
     A heuristic function estimates the cost from the current state to the nearest
-    goal in the provided SearchProblem.  This heuristic is trivial.
+    goal in the provided SearchProblem for a in actions:
+    This heuristic is trivial.
     """
     return 0
 
 def depthFirstSearch(problem):
+    s = problem.getStartState()
+    path = list()
+    nodes = list()
+    global nodes
+    lastAction = depthFirstSearchHelper(problem)
 
-    util.raiseNotDefined()
+    goal = Node(None, None, None, 1)
+    start = Node(s, None, None, 1)
+
+    for n in nodes:
+        if n.getAction() = a
+           goal = n
+
+    path.append(goal)
+
+    while goal != start:
+        goal = goal.getParent()
+        path.append(goal.getAction())
+    
+    #reverse the array here to get a clear path of the dfs, perhaps use sorted again
+    return path
+
+def depthFirstSearchHelper(problem):
+    if problem.getState() != problem.getStartState():
+        parent = problem.getParent()
+
+    if problem.getState() == None:
+        return None
+
+    actions = list()
+    actions = problems.getActions()
+    r[len(actions)]
+
+    i = 0
+    for a in actions:
+        r[i] = getResults(problem.getState(), a)
+
+        n = Node(problem.getState(), r[i], a, 1)
+        if n not in nodes:
+            nodes.append(n)
+        else:
+            nodes.remove(n)
+
+        if problem.goalState(r[i]):
+            return a
+
+        actions.push(r[i])
+        i += 1
+        depthFirstSearch(r[i])
+        actions.pop()
+
+    actions.pop()
 
 
 def iterativeDeepeningSearch(problem: SearchProblem):
+    
+    return depthFirstSearch(problem)
+
     """
     Perform DFS with increasingly larger depth. Begin with a depth of 1 and increment depth by 1 at every step.
 
@@ -162,7 +216,9 @@ def iterativeDeepeningSearch(problem: SearchProblem):
     by calling problem.getCost(problem.getStartState(), one_of_the_actions)
 
     """
-    "*** YOUR CODE HERE ***"
+    print("Start:", problem.getStartState())
+    print("Is the start a goal?", problem.goalTest(problem.getStartState()))
+
     util.raiseNotDefined()
     
 
