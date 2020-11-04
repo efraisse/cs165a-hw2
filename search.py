@@ -139,65 +139,49 @@ def nullHeuristic(state, problem=None):
 
 def iterativeDeepeningSearch(problem: SearchProblem):
 
-    global goal, q, v
-    goal = False
-    q = list()
-    v = list()
-
-    def depthFirstSearch(max_depth): #switch it around, have depthfirstsearch have max_depth
-        actions = list()
-
-        n = Node(problem.getStartState(), None, None, 0)
-
-        Help = depthFirstSearchHelper(n, actions, 0, max_depth)
-        if (not(goal)):
-            actions.pop(len(actions - 1))
-            return Help
-
-    def depthFirstSearchHelper(node, actions, current_depth, max_depth):
-        print(node)
-        if problem.goalTest(node.state):
-            goal = True
-            return actions
-
-        if current_depth >= max_depth:
-            actions.pop(len(actions) - 1)
-
-        allActions = problem.getActions(node.state)
-        i = 0
-        for a in allActions:
-            result = problem.getResult(node.state, a)
-
-            if result not in v:
-                n = Node(result, node.state, a, problem.getCost(node.state, a))
-                v.append(n)
-                q.append(n)
-                actions.append(a)
-                current_depth += 1
-                Help = depthFirstSearchHelper(n, actions, current_depth, max_depth)
-
-                if goal:
-                    return Help
-
-        if not(q.empty()):
-            q.pop()
-        if not(actions.empty()):
-            actions.pop()
-        return actions
-
-    depth = 1
-    while (not(goal)):
-        v.clear()
-        depthFirstSearch(depth)
-        depth += 1
-
-    goal = False
-
-    print(actions)
-    return actions
-
-
     """
+    index = 1
+    queue = list()
+    visited_Nodes = list()
+    goal_Actions = list()
+
+    def depthFirstSearchHelper(current_Node, current_depth, max_depth):
+        total_Nodes = 0
+        if (problem.goalTest(current_Node.state)):
+            if (not(current_Node.state == problem.getStartState())):
+                goal_Actions.insert(0, current_Node.action)
+            return True
+
+        if current_depth > max_depth:
+            return False
+        
+        current_Node_Actions = problem.getActions(current_Node.state)
+
+        for action in current_Node_actions:
+            result = problem.getResult(current_Node.state, action)
+
+            if result not in visited_Nodes:
+                new_Node = Node(result, current_Node, a, problem.getCost(current_Node.state, 1))
+                visited_Nodes.append(current_Node)
+                queue.insert(0, new_Node)
+                total_Nodes += 1
+
+        for node in range(total_Nodes):
+            if (depthFirstSearchHelper(queue.pop(0), current_depth + 1, max_depth)):
+                if (current_Node.state != problem.getStartState()):
+                    goal_Actions.insert(0, current_Node.action)
+                return True
+
+        return False
+
+    while (~depthFirstSearchHelper(problem.getStartState(), 1, index)):
+        index += 1
+        visited_Nodes.clear()
+        depthFirstSearchHelper(problem.getStartState(), 1, index)
+
+    print(goal_Actions)
+    return goal_Actions
+
     Perform DFS with increasingly larger depth. Begin with a depth of 1 and increment depth by 1 at every step.
 
     Your search algorithm needs to return a list of actions that reaches the
@@ -214,10 +198,55 @@ def iterativeDeepeningSearch(problem: SearchProblem):
     by calling problem.getResult(problem.getStartState(), one_of_the_actions)
     or the resulting cost for one of these actions
     by calling problem.getCost(problem.getStartState(), one_of_the_actions)
-
     """
 
-def aStarSearch(problem, heuristic=nullHeuristic):
+    def depthFirstSearch(problem, max_depth):
+        global visited_Nodes
+        global node_queue
+        global node_Actions
+        visited_Nodes = list()
+        node_queue = list()
+        node_Actions = list()
+
+        return depthFirstSearchHelper(Node(problem.getStartState(), None, None, 0), 1, max_depth)
+
+    def depthFirstSearchHelper(current_Node, current_depth, max_depth):
+        node_Counter = 0
+
+        if problem.goalTest(current_Node.state):
+            if current_Node.state != problem.getStartState():
+                node_Actions.append(current_Node.action)
+            return True
+        if current_depth > max_depth:
+            return False
+
+        allActions = problem.getActions(current_Node.state)
+
+        for action in allActions:
+            child_Node = problem.getResult(current_Node.state, action)
+
+            if child_Node not in visited_Nodes:
+                node_Counter += 1
+                new_Node = Node(child_Node, current_Node, action, problem.getCost(current_Node.state, action))
+                visited_Nodes.append(child_Node)
+                node_queue.insert(0, new_Node)
+
+        for every_node in range(node_Counter):
+            if depthFirstSearchHelper(node_queue.pop(0), current_depth + 1, max_depth):
+                if current_Node.state != problem.getStartState():
+                    node_Actions.insert(0, current_Node.action)
+                return True
+
+        return False
+
+    max_depth_index = 1
+    while not depthFirstSearch(problem, max_depth_index):
+        visited_Nodes.clear()
+        max_depth_index += 1
+    return node_Actions
+
+
+def aStarSearch(problem, heuristic = nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
     util.raiseNotDefined()
