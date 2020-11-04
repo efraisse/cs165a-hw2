@@ -201,47 +201,45 @@ def iterativeDeepeningSearch(problem: SearchProblem):
     """
 
     def depthFirstSearch(problem, max_depth):
-        global visited_Nodes
+        global visited_Nodes #variables that span through all iterations of nodes
         global node_queue
         global node_Actions
         visited_Nodes = list()
         node_queue = list()
         node_Actions = list()
-
         return depthFirstSearchHelper(Node(problem.getStartState(), None, None, 0), 1, max_depth)
 
     def depthFirstSearchHelper(current_Node, current_depth, max_depth):
-        node_Counter = 0
-
         if problem.goalTest(current_Node.state):
             if current_Node.state != problem.getStartState():
                 node_Actions.append(current_Node.action)
             return True
         if current_depth > max_depth:
             return False
-
+            
+        node_Counter = 0
         allActions = problem.getActions(current_Node.state)
-
         for action in allActions:
             child_Node = problem.getResult(current_Node.state, action)
-
             if child_Node not in visited_Nodes:
                 node_Counter += 1
                 new_Node = Node(child_Node, current_Node, action, problem.getCost(current_Node.state, action))
-                visited_Nodes.append(child_Node)
                 node_queue.insert(0, new_Node)
+                visited_Nodes.append(child_Node)
 
-        for every_node in range(node_Counter):
-            if depthFirstSearchHelper(node_queue.pop(0), current_depth + 1, max_depth):
+        for every_node in range(0, node_Counter):
+            front_Node = node_queue.pop(0)
+            if depthFirstSearchHelper(front_Node, current_depth + 1, max_depth):
                 if current_Node.state != problem.getStartState():
                     node_Actions.insert(0, current_Node.action)
                 return True
-
         return False
 
     max_depth_index = 1
     while not depthFirstSearch(problem, max_depth_index):
-        visited_Nodes.clear()
+        visited_Nodes.clear() #clear lists
+        node_queue.clear()
+        node_Actions.clear()
         max_depth_index += 1
     return node_Actions
 
