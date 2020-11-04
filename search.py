@@ -136,55 +136,66 @@ def nullHeuristic(state, problem=None):
     goal in the provided SearchProblem for a in actions:
     This heuristic is trivial.
     """
-    return 0
 
-def depthFirstSearch(problem, max_depth): #switch it around, have depthfirstsearch have max_depth
-    actions = list()
+def iterativeDeepeningSearch(problem: SearchProblem):
+
+    global goal, q, v
+    goal = False
     q = list()
     v = list()
 
-    global goal
-    goal = False
-    
-    n = Node(problem.getStartState(), None, None, 1)
+    def depthFirstSearch(max_depth): #switch it around, have depthfirstsearch have max_depth
+        actions = list()
 
-    return depthFirstSearchHelper(n, actions, 0, max_depth)
+        n = Node(problem.getStartState(), None, None, 0)
 
-def depthFirstSearchHelper(n, actions, current_depth, max_depth):
-    if problem.goalTest(n.state)
-        goal = True
+        Help = depthFirstSearchHelper(n, actions, 0, max_depth)
+        if (not(goal)):
+            actions.pop(len(actions - 1))
+            return Help
+
+    def depthFirstSearchHelper(node, actions, current_depth, max_depth):
+        print(node)
+        if problem.goalTest(node.state):
+            goal = True
+            return actions
+
+        if current_depth >= max_depth:
+            actions.pop(len(actions) - 1)
+
+        allActions = problem.getActions(node.state)
+        i = 0
+        for a in allActions:
+            result = problem.getResult(node.state, a)
+
+            if result not in v:
+                n = Node(result, node.state, a, problem.getCost(node.state, a))
+                v.append(n)
+                q.append(n)
+                actions.append(a)
+                current_depth += 1
+                Help = depthFirstSearchHelper(n, actions, current_depth, max_depth)
+
+                if goal:
+                    return Help
+
+        if not(q.empty()):
+            q.pop()
+        if not(actions.empty()):
+            actions.pop()
         return actions
 
-    if current_depth >= max_depth:
-        return None
-
-    allActions = problem.getActions(Node.state)
-    
-    r[len(allActions)]
-    i = 0
-    for a in allActions:
-        r[i] = problem.getResult(Node.state, a)
-
-        if r[i] not in v:
-            node = Node(r[i], problem.state, a, 1)
-            v.append(node)
-            q.append(node)
-
-        actions.append(a)
-        current_depth += 1
-
-        return depthFirstSearchHelper(r[i], actions, current_depth, max_depth)
-
-    q.pop()
-
-def iterativeDeepeningSearch(problem: SearchProblem):
-    
     depth = 1
     while (not(goal)):
-        return depthFirstSearch(problem, depth)
+        v.clear()
+        depthFirstSearch(depth)
         depth += 1
 
     goal = False
+
+    print(actions)
+    return actions
+
 
     """
     Perform DFS with increasingly larger depth. Begin with a depth of 1 and increment depth by 1 at every step.
