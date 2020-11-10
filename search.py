@@ -244,10 +244,61 @@ def iterativeDeepeningSearch(problem: SearchProblem):
     return node_Actions
 
 
-def aStarSearch(problem, heuristic = nullHeuristic):
-    """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+def aStarSearch(problem, heuristic=nullHeuristic):
+    node_queue = list()
+    visited_Nodes = list()
+    node_Actions = list()
+
+    def actions_to_goal(current_Node):
+        if current_Node.state != problem.getStartState():
+            goal_Actions.insert(0, current_Node.action)
+            actions_to_goal(current_Node.parent)
+        return True
+
+    def aStarHelper(current_Node, heuristic):
+        if problem.goalTest(current_Node.state):
+            if current_Node.state != problem.getStartState():
+                node_Actions.insert(0, current_Node.action)
+                actions_to_goal(current_Node)
+            return True
+
+        allActions = problem.getActions(current_Node.state)
+        for action in allActions:
+            child_Node = problem.getResult(current_Node.state, action)
+            if child_Node not in visited_Nodes:
+                new_Node = Node(child_Node, current_Node, action, problem.getCost(current_Node.state,
+                action)+current_Node.path_cost)
+                node_queue.append(new_Node)
+                visited_Nodes.append(child_Node)
+
+            for i in range (len(node_queue)):
+                if node_queue[i].state == child_Node:
+                    if problem.getCost(current_Node.state, action) + current_Node.path_cost < node_queue[i].path_cost:
+                        node_queue[i].path_cost = current_Node.path_cost + problem.getCost(current_Node.state, action)
+                        node_queue[i].action = action
+                        node_queue[i].parent = current_Node
+
+        min_path = heuristic(node_queue[0].state, problem) + node_queue[0].path_cost
+        min_node_index = 0
+        for index in (len(node_queue)):
+            if heuristic(node_queue[index].state, problem) + node_queue[index].path_cost < min_path:
+                min_path = heuristic(node_queue[index].state, problem) + node_queue[index].path_cost
+                min_node_index = index
+
+        front = node_queue.pop(min_node_index)
+        return aStarHelper(front, heuristic)
+
+    aStarHelper(Node(problem.getStartState(), None, None, 0), heuristic)
+"""
+    
+    src = Node(problem.getStartState(), None, None, 0)
+
+    possible = list()
+    visisted = list()
+    instructions = list()
+
+    visited.append(src.state)
+"""
 
 # Abbreviations
 bfs = breadthFirstSearch
